@@ -1,0 +1,12 @@
+[url "https://"]
+        insteadOf = git://
+[url "https://github.com/"]
+        insteadOf = git://bitbucket.org/
+[http]
+[user]
+        name = Li, Yingjie
+        email = lyjbupt@foxmail.com
+[core]
+        editor = vim
+[push]
+        default = matching
