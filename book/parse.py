@@ -58,6 +58,7 @@ def main():
             key = remove_punctuation(str(book_list[i]).strip())
             book_list_filter[key] = str(book_list[i])
 
+    print("Total size before sort: %d" %len(book_list_filter))
     # Sort list from order of pinyin
     pin = Pinyin()
     result = []
@@ -71,6 +72,7 @@ def main():
         book_list_sorted.append(book_list_filter[result[i]])
 
     #Save as excel with original value
+    print("Total size after sort: %d" %len(book_list_sorted))
     df_out = fill_reshape(book_list_sorted, rows + 1, cols)
     df_out.to_excel(writer, 'sheet 1', header=False, index = False)
     writer.save()
