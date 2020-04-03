@@ -1,0 +1,38 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-28-alpha
+    environment:
+      _JAVA_OPTIONS: -Xmx3g
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
+    steps:
+      - checkout
+      - run:
+          name: Set proxy setting 
+          command: |
+            curl -sL https://art.sec.samsung.net/artifactory/tools/CircleCI/scripts/set_proxy_setting.sh | sh
+      - run:
+          name: update sdk licenses
+          command: |
+            yes | sdkmanager --licenses --proxy=http --proxy_host=${proxyHost} --proxy_port=${proxyPort} || true
+            yes | sdkmanager --update --proxy=http --proxy_host=${proxyHost} --proxy_port=${proxyPort} || true
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          command: |
+            ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Run Build
+          command: ./gradlew assembleDebug assembleRelease
+      - store_artifacts: 
+          path: app/build/outputs/apk/release/app-release.apk
+          prefix: release
+      - store_artifacts: 
+          path: app/build/outputs/apk/debug/app-debug.apk
+          prefix: debug
